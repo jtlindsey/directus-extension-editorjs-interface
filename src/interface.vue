@@ -124,7 +124,11 @@ onUnmounted(() => {
 watch(
 	() => props.value,
 	async (newVal: any, oldVal: any) => {
-		if (!editorjsInstance.value || !editorjsInstance.value.isReady || isInternalChange.value) return;
+		if (!editorjsInstance.value || !editorjsInstance.value.isReady) return;
+ 		if (isInternalChange.value) {
+ 			isInternalChange.value = false;
+ 			return;
+ 		}
 
 		// Do not render if there is uploader active operation.
 		if (fileHandler.value !== null) return;
@@ -141,6 +145,8 @@ watch(
 			}
 		} catch (error) {
 			window.console.warn('editorjs-extension: %s', error);
+		} finally {
+			isInternalChange.value = false;
 		}
 
 		isInternalChange.value = false;
